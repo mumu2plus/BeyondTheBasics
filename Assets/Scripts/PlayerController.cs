@@ -6,6 +6,11 @@ public class PlayerController : Shape
 {
     public ProjectileController projectilePrefab;
 
+    private void Awake()
+    {
+        //Debug.Log(gameSceneController.screenBounds);
+    }
+
     protected override void Start()
     {
         base.Start();

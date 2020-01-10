@@ -8,20 +8,35 @@ public class GameSceneController : MonoBehaviour
     public Vector3 screenBounds;
     public EnemyController enemyPrefab;
 
+    private HUDController hUDController;
+    private int totalPoints;
+
+    private PlayerController player;
+
     // Start is called before the first frame update
     void Start()
     {
+        hUDController = FindObjectOfType<HUDController>();
         playerSpeed = 10;
         screenBounds = GetScreenBounds();
         //Debug.Log("screenBounds.x=" + screenBounds.x);
         //Debug.Log("screenBounds.y=" + screenBounds.y);
         StartCoroutine(SpawnEnemies());
+        player = FindObjectOfType<PlayerController>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            player.SetColor(Color.red);
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            player.SetColor(Color.yellow);
+        }
     }
 
     private IEnumerator SpawnEnemies()
@@ -36,9 +51,16 @@ public class GameSceneController : MonoBehaviour
             EnemyController enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
 
             enemy.EnemyEscaped += EnemyAtBottom;
+            enemy.EnemyKilled += EnemyKilled;
 
             yield return wait;
         }
+    }
+
+    private void EnemyKilled(int pointValue)
+    {
+        totalPoints += pointValue;
+        hUDController.scoreText.text = totalPoints.ToString();
     }
 
     private void EnemyAtBottom(EnemyController enemy)

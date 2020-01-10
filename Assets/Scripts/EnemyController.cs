@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public delegate void EnemyEscapedHandler(EnemyController enemy);
 
 public class EnemyController : Shape, IKillable
 {
     public event EnemyEscapedHandler EnemyEscaped;
+    public event Action<int> EnemyKilled;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -19,6 +21,16 @@ public class EnemyController : Shape, IKillable
     void Update()
     {
         MoveEnemy();
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (EnemyKilled != null)
+        {
+            EnemyKilled(10);
+            Destroy(collision.gameObject);
+            Destroy(gameObject);
+        }
     }
 
     private void MoveEnemy()
